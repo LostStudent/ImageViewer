@@ -1,5 +1,7 @@
-For a future update I will make cell sizes random but with a particular # ImageViewer
-Demo of image loading/displaying  from flickr
+
+Demo of API consumption, JSON parsing to native model objects and asynchronous image loading from the flickr search API.
+
+Requires Swift 3 and XCode 8
 
 This demo requires a resources file (.plist) to be added to the root of project directory.
 
