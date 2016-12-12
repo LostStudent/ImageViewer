@@ -46,14 +46,29 @@ class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
     
     func call(_ method:String,baseURL:String, callback:@escaping (_ data:Data?, _ response:URLResponse?, _ error:Error?) -> Void) {
         
-        Bundle.main.path(forResource: "APIKey", ofType: ".plist")
-        
-        let compiledURL = URL(string: "\(baseURL)&api_key=\(flickrAPIKey)&tags=kitten&format=json&nojsoncallback=1" )
-        
-        guard let url = compiledURL else {
+        guard let path = Bundle.main.path(forResource: "APIKey", ofType: "plist") else {
             
-            callback(nil,nil,NSError(domain: "photosearch", code: 0, userInfo: nil));
-                return;
+            callback(nil,nil,NSError(domain: "photosearch.nokeystorepath", code: 1, userInfo: nil));
+            return
+        }
+        
+        guard let keyStore = NSDictionary(contentsOfFile:  path) else {
+            
+            callback(nil,nil,NSError(domain: "photosearch.nokeystore", code: 2, userInfo: nil));
+            return
+        }
+        
+        //This isnt great, will update to something better
+        guard let flickrAPIKey = keyStore["FlickrAPIKey"] else {
+            
+            callback(nil,nil,NSError(domain: "photosearch.nokey", code: 3, userInfo: nil));
+            return
+        }
+        
+        guard let url =  URL(string: "\(baseURL)&api_key=\(flickrAPIKey)&tags=kitten&format=json&nojsoncallback=1" ) else {
+            
+            callback(nil,nil,NSError(domain: "photosearch.nourl", code: 4, userInfo: nil))
+            return
         }
         
          var request = URLRequest(url:url);
