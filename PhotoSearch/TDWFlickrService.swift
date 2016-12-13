@@ -44,13 +44,13 @@ class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
         
     }
     
-    func sizes(for imageID:String, callback:@escaping (_ response:TDWFlickrSearchResponse?, _ error:Error?) -> Void) {
+    func sizes(for imageID:String, callback:@escaping (_ response:TDWFlickrImageSizesResponse?, _ error:Error?) -> Void) {
         
         call("GET",baseURL:"https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&photo_id=\(imageID)") {(data, response, error) -> Void in
             
             if error != nil {
                 
-                callback(nil, nil)
+                callback(nil, error)
                 
             } else {
                 
@@ -58,7 +58,7 @@ class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
                     
                     let json = JSON(data: responseData)
                     
-                    let response = TDWFlickrSearchResponse(fromJson: json)
+                    let response = TDWFlickrImageSizesResponse(json: json)
                     
                     callback(response ,nil)
                     

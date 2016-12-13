@@ -44,6 +44,8 @@ class TDWCollectionViewImageCellData: TDWCollectionViewCellData {
     
     var imageLoader:TDWImageLoader?
     
+    var url: String?
+    
     init(identifier:String, size:CGSize, imageTitle:String? = nil, image:UIImage? = nil, imageLoader:TDWImageLoader? = nil) {
         
         self.imageTitle = imageTitle

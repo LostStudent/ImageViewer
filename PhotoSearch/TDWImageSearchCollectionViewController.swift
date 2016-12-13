@@ -91,33 +91,57 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
                 
                 collectionViewSectionRows.append(cellData)
                 
-                cellData.imageLoader?.downloadImage("https://farm\(farm).staticflickr.com/\(server)/\(id)_\(secret).jpg", callback: { (data, response, error) in
+                TDWFlickrService(apiKey:flickrAPIKey).sizes(for: id, callback: { (response, error) in
                     
-                    if let error = error {
+                    if error != nil {
                         
-                        print(error)
+                        print("error")
+                    }
+                    guard let response = response else {
+                        
+                        return
                     }
                     
-                    guard let data = data else {
+                    let size = response.sizes?.size?.first(where: { (size) -> Bool in
+                        return size.label == "Large Square"
+                    })
+                    
+                    guard let url = size?.source else {
                         
-                        print("No Data")
+                        return
+                    }
+                    
+                   // "https://farm\(farm).staticflickr.com/\(server)/\(id)_\(secret).jpg"
+                    
+                    cellData.imageLoader?.downloadImage(url, callback: { (data, response, error) in
+                        
+                        if let error = error {
+                            
+                            print(error)
+                        }
+                        
+                        guard let data = data else {
+                            
+                            print("No Data")
+                            
+                            return();
+                        }
+                        
+                        cellData.image = UIImage(data: data)
+                        
+                        if let indexPath = self.collectionViewDataSource?.indexPathOfObject(cellData) {
+                            
+                            self.collectionView!.reloadItems(at: [indexPath])
+                            
+                        }
+                        
+                        cellData.imageLoader = nil
                         
                         return();
-                    }
-                    
-                    cellData.image = UIImage(data: data)
-                    
-                    if let indexPath = self.collectionViewDataSource?.indexPathOfObject(cellData) {
                         
-                        self.collectionView!.reloadItems(at: [indexPath])
-                        
-                    }
-                    
-                    cellData.imageLoader = nil
-                    
-                    return();
-                    
-                })
+                    })
+                
+                  })
             }
             
             if let paths = self.collectionViewDataSource?.insert(collectionViewSectionRows, atIndex: 0, section: 0) {

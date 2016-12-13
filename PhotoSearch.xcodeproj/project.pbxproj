@@ -19,6 +19,10 @@
 		AAB58FD41DF85F1100C95935 /* TDWCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB58FD31DF85F1100C95935 /* TDWCollectionViewDataSource.swift */; };
 		AAB9C4E01DF9A66900D2E4B8 /* TDWPhotos.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB9C4DF1DF9A66900D2E4B8 /* TDWPhotos.swift */; };
 		AAB9C4E21DF9BCAC00D2E4B8 /* TDWImageSearchCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB9C4E11DF9BCAC00D2E4B8 /* TDWImageSearchCollectionViewController.swift */; };
+		AAD89FC61E00106C00FD8786 /* TDWFlickrImageSizesResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD89FC31E00106C00FD8786 /* TDWFlickrImageSizesResponse.swift */; };
+		AAD89FC71E00106C00FD8786 /* TDWSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD89FC41E00106C00FD8786 /* TDWSize.swift */; };
+		AAD89FC81E00106C00FD8786 /* TDWSizes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD89FC51E00106C00FD8786 /* TDWSizes.swift */; };
+		AAD89FCA1E001B3F00FD8786 /* ImageSizesResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD89FC91E001B3F00FD8786 /* ImageSizesResponseTests.swift */; };
 		AAE801AF1DFEFBEA004D8C75 /* APIKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = AAE801AE1DFEFBEA004D8C75 /* APIKey.plist */; };
 		AAFC85441DFAE2E300806CD6 /* PhotoSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFC85431DFAE2E300806CD6 /* PhotoSearchTests.swift */; };
 		AAFC854C1DFC183600806CD6 /* TDWCellSizeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFC854B1DFC183600806CD6 /* TDWCellSizeManager.swift */; };
@@ -54,6 +58,10 @@
 		AAB58FD31DF85F1100C95935 /* TDWCollectionViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TDWCollectionViewDataSource.swift; sourceTree = "<group>"; };
 		AAB9C4DF1DF9A66900D2E4B8 /* TDWPhotos.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TDWPhotos.swift; sourceTree = "<group>"; };
 		AAB9C4E11DF9BCAC00D2E4B8 /* TDWImageSearchCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TDWImageSearchCollectionViewController.swift; sourceTree = "<group>"; };
+		AAD89FC31E00106C00FD8786 /* TDWFlickrImageSizesResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TDWFlickrImageSizesResponse.swift; sourceTree = "<group>"; };
+		AAD89FC41E00106C00FD8786 /* TDWSize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TDWSize.swift; sourceTree = "<group>"; };
+		AAD89FC51E00106C00FD8786 /* TDWSizes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TDWSizes.swift; sourceTree = "<group>"; };
+		AAD89FC91E001B3F00FD8786 /* ImageSizesResponseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSizesResponseTests.swift; sourceTree = "<group>"; };
 		AAE801AE1DFEFBEA004D8C75 /* APIKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APIKey.plist; sourceTree = "<group>"; };
 		AAFC85411DFAE2E300806CD6 /* PhotoSearchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhotoSearchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAFC85431DFAE2E300806CD6 /* PhotoSearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSearchTests.swift; sourceTree = "<group>"; };
@@ -137,6 +145,9 @@
 		AAB58FCD1DF83E2000C95935 /* Generated */ = {
 			isa = PBXGroup;
 			children = (
+				AAD89FC31E00106C00FD8786 /* TDWFlickrImageSizesResponse.swift */,
+				AAD89FC41E00106C00FD8786 /* TDWSize.swift */,
+				AAD89FC51E00106C00FD8786 /* TDWSizes.swift */,
 				AAB58FC91DF83E1B00C95935 /* TDWFlickrSearchResponse.swift */,
 				AAB9C4DF1DF9A66900D2E4B8 /* TDWPhotos.swift */,
 				AAB58FCA1DF83E1B00C95935 /* TDWPhoto.swift */,
@@ -158,6 +169,7 @@
 			children = (
 				AAFC85431DFAE2E300806CD6 /* PhotoSearchTests.swift */,
 				AAFC85451DFAE2E300806CD6 /* Info.plist */,
+				AAD89FC91E001B3F00FD8786 /* ImageSizesResponseTests.swift */,
 			);
 			path = PhotoSearchTests;
 			sourceTree = "<group>";
@@ -375,11 +387,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AAD89FC81E00106C00FD8786 /* TDWSizes.swift in Sources */,
 				AAB58FD11DF85E2200C95935 /* TDWImageCollectionViewCell.swift in Sources */,
+				AAD89FC61E00106C00FD8786 /* TDWFlickrImageSizesResponse.swift in Sources */,
 				AAB9C4E01DF9A66900D2E4B8 /* TDWPhotos.swift in Sources */,
 				AA7653A91DF96BB60061BBBE /* TDWImageLoader.swift in Sources */,
 				AAB58FB61DF8356000C95935 /* AppDelegate.swift in Sources */,
 				AAB58FC81DF83ACE00C95935 /* TDWFlickrService.swift in Sources */,
+				AAD89FC71E00106C00FD8786 /* TDWSize.swift in Sources */,
 				AAB9C4E21DF9BCAC00D2E4B8 /* TDWImageSearchCollectionViewController.swift in Sources */,
 				AAFC854C1DFC183600806CD6 /* TDWCellSizeManager.swift in Sources */,
 				AAB58FCC1DF83E1B00C95935 /* TDWPhoto.swift in Sources */,
@@ -393,6 +408,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAFC85441DFAE2E300806CD6 /* PhotoSearchTests.swift in Sources */,
+				AAD89FCA1E001B3F00FD8786 /* ImageSizesResponseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
