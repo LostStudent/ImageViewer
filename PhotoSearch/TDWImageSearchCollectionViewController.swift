@@ -59,7 +59,7 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
         }
 
         //continue to make call
-        TDWFlickrService(apiKey:flickrAPIKey).search("mobile") { (response, error) in
+        TDWFlickrService(apiKey:flickrAPIKey).search("kitten") { (response, error) in
             
             if let err = error{
                 

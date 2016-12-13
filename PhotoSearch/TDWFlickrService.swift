@@ -12,7 +12,7 @@ import SwiftyJSON
 
 class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
     
-    var apiKey:String! = nil
+    var apiKey:String? = nil;
     
     init(apiKey:String) {
         
@@ -21,7 +21,32 @@ class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
     
     func search(_ term:String, callback:@escaping (_ response:TDWFlickrSearchResponse?, _ error:Error?) -> Void) {
         
-        call("GET",baseURL:"https://api.flickr.com/services/rest/?method=flickr.photos.search") {(data, response, error) -> Void in
+        call("GET",baseURL:"https://api.flickr.com/services/rest/?method=flickr.photos.search&tags=\(term)") {(data, response, error) -> Void in
+            
+            if error != nil {
+                
+                callback(nil, nil)
+                
+            } else {
+                
+                if let responseData = data {
+                    
+                    let json = JSON(data: responseData)
+                    
+                    let response = TDWFlickrSearchResponse(fromJson: json)
+                    
+                    callback(response ,nil)
+                    
+                }
+                
+            }
+        }
+        
+    }
+    
+    func sizes(for imageID:String, callback:@escaping (_ response:TDWFlickrSearchResponse?, _ error:Error?) -> Void) {
+        
+        call("GET",baseURL:"https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&photo_id=\(imageID)") {(data, response, error) -> Void in
             
             if error != nil {
                 
@@ -48,13 +73,13 @@ class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
     func call(_ method:String,baseURL:String, callback:@escaping (_ data:Data?, _ response:URLResponse?, _ error:Error?) -> Void) {
         
                 
-        guard let url =  URL(string: "\(baseURL)&api_key=\(self.apiKey!)&tags=kitten&format=json&nojsoncallback=1" ) else {
+        guard let url =  URL(string: "\(baseURL)&api_key=\(self.apiKey!)&format=json&nojsoncallback=1" ) else {
             
             callback(nil,nil,NSError(domain: "photosearch.nourl", code: 0, userInfo: nil))
             return
         }
         
-         var request = URLRequest(url:url);
+        var request = URLRequest(url:url);
         
         request.httpMethod = method;
         
