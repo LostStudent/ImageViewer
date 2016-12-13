@@ -41,9 +41,25 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
         
         layout.minimumInteritemSpacing = 0
         
-        // Do any additional setup after loading the view.
+        //Get the API Key from a resource file
         
-        TDWFlickrService().search("mobile") { (response, error) in
+        guard let path = Bundle.main.path(forResource: "APIKey", ofType: "plist") else {
+            
+            return
+        }
+        
+        guard let keyStore = NSDictionary(contentsOfFile:  path) else {
+            
+            return
+        }
+        
+        guard let flickrAPIKey = keyStore["FlickrAPIKey"] as? String else {
+            
+            return
+        }
+
+        //continue to make call
+        TDWFlickrService(apiKey:flickrAPIKey).search("mobile") { (response, error) in
             
             if let err = error{
                 
@@ -110,7 +126,6 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
                 
             }
             
-                    //self.collectionView?.reloadData()
         }
  
     }

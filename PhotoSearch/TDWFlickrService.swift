@@ -11,12 +11,13 @@ import Foundation
 import SwiftyJSON
 
 class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
-
-    //Key:
-    //47e7823406de7525a3da6fe36aad5ca1
     
-    //Secret:
-    //3e4933a1f16615c8de7525a3da6fe36aad5ca1
+    var apiKey:String! = nil
+    
+    init(apiKey:String) {
+        
+        self.apiKey = apiKey
+    }
     
     func search(_ term:String, callback:@escaping (_ response:TDWFlickrSearchResponse?, _ error:Error?) -> Void) {
         
@@ -46,28 +47,10 @@ class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
     
     func call(_ method:String,baseURL:String, callback:@escaping (_ data:Data?, _ response:URLResponse?, _ error:Error?) -> Void) {
         
-        guard let path = Bundle.main.path(forResource: "APIKey", ofType: "plist") else {
+                
+        guard let url =  URL(string: "\(baseURL)&api_key=\(self.apiKey!)&tags=kitten&format=json&nojsoncallback=1" ) else {
             
-            callback(nil,nil,NSError(domain: "photosearch.nokeystorepath", code: 1, userInfo: nil));
-            return
-        }
-        
-        guard let keyStore = NSDictionary(contentsOfFile:  path) else {
-            
-            callback(nil,nil,NSError(domain: "photosearch.nokeystore", code: 2, userInfo: nil));
-            return
-        }
-        
-        //This isnt great, will update to something better
-        guard let flickrAPIKey = keyStore["FlickrAPIKey"] else {
-            
-            callback(nil,nil,NSError(domain: "photosearch.nokey", code: 3, userInfo: nil));
-            return
-        }
-        
-        guard let url =  URL(string: "\(baseURL)&api_key=\(flickrAPIKey)&tags=kitten&format=json&nojsoncallback=1" ) else {
-            
-            callback(nil,nil,NSError(domain: "photosearch.nourl", code: 4, userInfo: nil))
+            callback(nil,nil,NSError(domain: "photosearch.nourl", code: 0, userInfo: nil))
             return
         }
         
