@@ -103,6 +103,7 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
                     }
                     
                     let size = response.sizes?.size?.first(where: { (size) -> Bool in
+                        
                         return size.label == "Large Square"
                     })
                     
@@ -111,9 +112,14 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
                         return
                     }
                     
-                   // "https://farm\(farm).staticflickr.com/\(server)/\(id)_\(secret).jpg"
+                    cellData.imageLoader?.downloadImage(url,progress: {(recieved,total) in
                     
-                    cellData.imageLoader?.downloadImage(url, callback: { (data, response, error) in
+                        if let indexPath = self.collectionViewDataSource?.indexPathOfObject(cellData) {
+                            
+                            self.collectionView!.reloadItems(at: [indexPath])
+                        }
+                        
+                    }, completed: { (data, response, error) in
                         
                         if let error = error {
                             
@@ -121,9 +127,7 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
                         }
                         
                         guard let data = data else {
-                            
-                            print("No Data")
-                            
+
                             return();
                         }
                         
@@ -147,7 +151,6 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
             if let paths = self.collectionViewDataSource?.insert(collectionViewSectionRows, atIndex: 0, section: 0) {
             
                 self.collectionView?.insertItems(at: paths)
-                
             }
             
         }

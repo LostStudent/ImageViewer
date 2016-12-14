@@ -15,6 +15,8 @@ class TDWCollectionViewCell: UICollectionViewCell {
 
 class TDWImageCollectionViewCell: UICollectionViewCell {
     
+    @IBOutlet weak var progressLabel: UILabel!
+    
     @IBOutlet weak var imageTitle: UILabel!
     
     let identifier = "TDWImageCollectionViewCell"
@@ -47,11 +49,25 @@ class TDWImageCollectionViewCell: UICollectionViewCell {
                 
                 loadingIndicator.stopAnimating()
                 
+                progressLabel.isHidden = true
+                
                 imageView.image = image
                 
             } else {
-                
+
                 loadingIndicator.startAnimating()
+                
+                progressLabel.isHidden = false
+                
+                self.progressLabel.text = "loading"
+ 
+                if let loader = self.cellData?.imageLoader {
+
+                    if let progress = loader.getProgress() {
+                    
+                        self.progressLabel.text = "loading \(progress.recieved) of \(progress.total)"
+                    }
+                }
             }
         }
     }

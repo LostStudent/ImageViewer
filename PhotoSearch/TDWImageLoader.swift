@@ -8,15 +8,31 @@
 
 import UIKit
 
-class TDWImageLoader: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
+class TDWImageLoader: NSObject, URLSessionDelegate, URLSessionDataDelegate {
     
-    func downloadImage(_ baseURL:String, callback:@escaping (_ data:Data?, _ response:URLResponse?, _ error:Error?) -> Void) {
+    var task : URLSessionDataTask? = nil
+    
+    var progress : ((Int64,Int64) -> Void)? = nil
+    
+    var completed : ((Data?, URLResponse?, Error?) -> Void)? = nil
+    
+    var returnedData : Data? = nil
+    
+    func getProgress() -> (recieved:Int64,total:Int64)? {
         
-       
-        
-        guard let url = URL(string: "\(baseURL)&api_key=47e7823406de7525a3da6fe36aad5ca1" ) else {
+        guard let t = task else {
             
-            callback(nil,nil,NSError(domain: "photosearch", code: 0, userInfo: nil));
+            return nil
+        }
+        
+        return (recieved:t.countOfBytesReceived, total:t.countOfBytesExpectedToReceive)
+    }
+    
+    func downloadImage(_ baseURL:String, progress:@escaping (_ recieved:Int64,_ total:Int64) -> Void, completed:@escaping (_ data:Data?, _ response:URLResponse?, _ error:Error?) -> Void) {
+        
+        guard let url = URL(string: "\(baseURL)" ) else {
+            
+            completed(nil,nil,NSError(domain: "photosearch", code: 0, userInfo: nil));
             return;
         }
         
@@ -24,7 +40,9 @@ class TDWImageLoader: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
         
         request.httpMethod = "GET";
         
-        //var
+        self.completed = completed
+        
+        self.progress = progress
         
         let configuration =
             URLSessionConfiguration.default
@@ -33,10 +51,43 @@ class TDWImageLoader: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
                                    delegate: self,
                                    delegateQueue:OperationQueue.main)
         
-        //let task = session.dataTask(with: request, completionHandler:callback)
+        task = session.dataTask(with: request)
+    
+        task?.resume()
+    }
+
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Swift.Void) {
         
-        let task = session.dataTask(with: request, completionHandler: callback)
+        completionHandler(.allow)
         
-        task.resume()
+        if let progress = progress {
+            
+            progress(dataTask.countOfBytesReceived, dataTask.countOfBytesExpectedToReceive)
+        }
+    }
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        
+        if var newData = returnedData {
+            
+             newData.append(data)
+            
+        } else {
+            
+            returnedData = data
+        }
+        
+        if let progress = progress {
+            
+             progress(dataTask.countOfBytesReceived, dataTask.countOfBytesExpectedToReceive)
+        }
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        
+        if let completed = completed {
+        
+            completed(returnedData, task.response, error)
+        }
     }
 }

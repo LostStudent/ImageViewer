@@ -10,7 +10,7 @@ import Foundation
 
 import SwiftyJSON
 
-class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
+class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionDataDelegate {
     
     var apiKey:String? = nil;
     
@@ -96,5 +96,7 @@ class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionTaskDelegate {
         
         task.resume()
     }
+    
+    
 }
 
