@@ -14,6 +14,10 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
 
     var collectionViewDataSource : TDWCollectionViewDataSource? = nil
     
+    var page = 1
+    
+    var term = "kitten"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -41,7 +45,10 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
         
         layout.minimumInteritemSpacing = 0
         
-        //Get the API Key from a resource file
+        fetchPage(page: page)
+    }
+    
+    func fetchPage(page:Int) -> Void {
         
         guard let path = Bundle.main.path(forResource: "APIKey", ofType: "plist") else {
             
@@ -57,9 +64,8 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
             
             return
         }
-
-        //continue to make call
-        TDWFlickrService(apiKey:flickrAPIKey).search("kitten") { (response, error) in
+    
+        TDWFlickrService(apiKey:flickrAPIKey).search(term,page: page) { (response, error) in
             
             if let err = error{
                 
@@ -71,7 +77,6 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
                 print("No Resp")
                 
                 return;
-                
             }
             
             var collectionViewSectionRows = [TDWCollectionViewImageCellData]()
@@ -80,7 +85,7 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
             
             for imageData in response.photos.photo {
                 
-                guard let farm = imageData.farm, let server = imageData.server, let id = imageData.id, let secret = imageData.secret else {
+                guard let id = imageData.id else {
                     
                     print("no url params")
                     
@@ -148,9 +153,12 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
                   })
             }
             
-            if let paths = self.collectionViewDataSource?.insert(collectionViewSectionRows, atIndex: 0, section: 0) {
+            if let idx = self.collectionViewDataSource?.sectionData[0].items.count {
             
-                self.collectionView?.insertItems(at: paths)
+                if let paths = self.collectionViewDataSource?.insert(collectionViewSectionRows, atIndex: idx, section: 0) {
+                
+                    self.collectionView?.insertItems(at: paths)
+                }
             }
             
         }
@@ -176,7 +184,21 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets.zero
     }
-
     
+    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        
+        let scrollY = scrollView.contentSize.height - scrollView.contentOffset.y;
+        
+        let diff = scrollY - scrollView.frame.size.height;
+        
+        if (diff < 10) {
+            
+            page+=1
+            
+            fetchPage(page: page)
+            
+        }
+    }
+
     
 }

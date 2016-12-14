@@ -19,9 +19,9 @@ class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionDataDelegate {
         self.apiKey = apiKey
     }
     
-    func search(_ term:String, callback:@escaping (_ response:TDWFlickrSearchResponse?, _ error:Error?) -> Void) {
+    func search(_ term:String, page:Int, callback:@escaping (_ response:TDWFlickrSearchResponse?, _ error:Error?) -> Void) {
         
-        call("GET",baseURL:"https://api.flickr.com/services/rest/?method=flickr.photos.search&tags=\(term)") {(data, response, error) -> Void in
+        call("GET",baseURL:"https://api.flickr.com/services/rest/?method=flickr.photos.search&tags=\(term)&per_page=20&page=\(page)") {(data, response, error) -> Void in
             
             if error != nil {
                 
@@ -36,12 +36,9 @@ class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionDataDelegate {
                     let response = TDWFlickrSearchResponse(fromJson: json)
                     
                     callback(response ,nil)
-                    
                 }
-                
             }
         }
-        
     }
     
     func sizes(for imageID:String, callback:@escaping (_ response:TDWFlickrImageSizesResponse?, _ error:Error?) -> Void) {

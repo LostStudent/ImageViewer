@@ -59,6 +59,8 @@ class TDWImageCollectionViewCell: UICollectionViewCell {
                 
                 progressLabel.isHidden = false
                 
+                imageView.image = nil
+                
                 self.progressLabel.text = "loading"
  
                 if let loader = self.cellData?.imageLoader {
@@ -71,6 +73,7 @@ class TDWImageCollectionViewCell: UICollectionViewCell {
             }
         }
     }
+    
  
     class func sizeForObject(_ object: TDWCollectionViewImageCellData, atIndexPath indexPath: IndexPath!, constrainedToSize constrainedSize: CGSize) -> CGSize {
         
