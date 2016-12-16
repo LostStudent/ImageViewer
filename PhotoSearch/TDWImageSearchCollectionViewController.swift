@@ -21,9 +21,6 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-    
         // Register cell classes
         //self.collectionView!.registerClass(TDWImageCollectionViewCell.self, forCellWithReuseIdentifier: String(TDWImageCollectionViewCell))
         
@@ -152,15 +149,15 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
                 
                   })
             }
-            
+
             if let idx = self.collectionViewDataSource?.sectionData[0].items.count {
-            
-                if let paths = self.collectionViewDataSource?.insert(collectionViewSectionRows, atIndex: idx, section: 0) {
                 
+                if let paths = self.collectionViewDataSource?.insert(collectionViewSectionRows, atIndex: idx-1, section: 0)         {
+                    
                     self.collectionView?.insertItems(at: paths)
                 }
+
             }
-            
         }
  
     }
