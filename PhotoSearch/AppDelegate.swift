@@ -13,9 +13,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        guard let path = Bundle.main.path(forResource: "APIKey", ofType: "plist") else {
+            
+            return false
+        }
+        
+        guard let keyStore = NSDictionary(contentsOfFile:  path) else {
+            
+            return false
+        }
+        
+        guard let flickrAPIKey = keyStore["FlickrAPIKey"] as? String, flickrAPIKey != "" else {
+            
+            return false
+        }
+
+        if let rootController = window?.rootViewController as? TDWImageSearchCollectionViewController {
+        
+            rootController.searchData = TDWFlickrSearchData(service: TDWFlickrService(apiKey: flickrAPIKey))
+            
+        } else {
+            
+            return false
+        }
+        
         return true
     }
 
