@@ -34,6 +34,13 @@ class TDWCollectionViewCellData: NSObject {
         
          self.size = size;
     }
+    
+    init<CellClass>(cellClass:CellClass.Type, size:CGSize) {
+
+        self.identifier = String(describing: cellClass)
+        
+        self.size = size;
+    }
 }
 
 class TDWCollectionViewImageCellData: TDWCollectionViewCellData {
@@ -56,6 +63,18 @@ class TDWCollectionViewImageCellData: TDWCollectionViewCellData {
         
         super.init(identifier: identifier, size: size)
     }
+    
+    init<CellClass>(cellClass:CellClass.Type, size:CGSize, imageTitle:String? = nil, image:UIImage? = nil, imageLoader:TDWImageLoader? = nil) {
+        
+        self.imageTitle = imageTitle
+        
+        self.image = image
+        
+        self.imageLoader = imageLoader
+        
+        super.init(cellClass: cellClass, size: size)
+    }
+
 }
 
 class TDWCollectionViewDataSource: NSObject, UICollectionViewDataSource {
