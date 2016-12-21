@@ -60,12 +60,9 @@ class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionDataDelegate {
                     callback(response ,nil)
                     
                 }
-                
             }
         }
-        
     }
-    
     
     func call(_ method:String,baseURL:String, callback:@escaping (_ data:Data?, _ response:URLResponse?, _ error:Error?) -> Void) {
         

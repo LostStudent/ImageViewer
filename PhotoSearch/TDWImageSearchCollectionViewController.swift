@@ -8,19 +8,19 @@
 
 import UIKit
 
-private let reuseIdentifier = "Cell"
-
-class TDWImageSearchCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class TDWImageSearchCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, TDWSearchDataProviderDelegate {
 
     var collectionViewDataSource : TDWCollectionViewDataSource? = nil
     
-    var searchData : TDWFlickrSearchData? {
+    var searchData : TDWSearchDataProvider? {
         
          didSet {
             
             if let searchData = searchData ,let _ = collectionView {
                 
-                searchData.search(term: "Kittens", completion: self.generateCellData)
+                self.searchData?.delegate = self
+                
+                searchData.search(term: "Kittens", completion: self.didRecieveData)
             }
         }
     }
@@ -31,8 +31,7 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
         
         collectionViewDataSource = TDWCollectionViewDataSource(sectionData: [
             TDWCollectionViewDataSection(identifier:"imageSection",
-                items:  [TDWCollectionViewImageCellData(identifier:"TDWImageCollectionViewCell",size: CGSize(width: (collectionView?.frame.size.width)!, height: 200)
-            )])
+                items:  [TDWCollectionViewImageCellData(identifier:"TDWImageCollectionViewCell")])
         ])
         
         self.collectionView?.dataSource = collectionViewDataSource
@@ -55,99 +54,6 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
         // Dispose of any resources that can be recreated.
     }
     
-    func generateCellData(photos:[TDWPhoto]?, error:Error?) -> Void {
-        
-        guard let photos = photos else {
-            
-            return
-        }
-        
-        let width = (self.collectionView?.frame.size.width)!
-        
-        var collectionViewSectionRows = [TDWCollectionViewImageCellData]()
-        
-        for imageData in photos {
-            
-            guard let id = imageData.id else {
-                
-                print("no url params")
-                
-                continue
-            }
-            
-            
-            
-            let cellData = TDWCollectionViewImageCellData(identifier: "TDWImageCollectionViewCell", size: CGSize(width: width/2, height: width/2 ),imageTitle:imageData.title,imageLoader:TDWImageLoader())
-            
-            collectionViewSectionRows.append(cellData)
-            
-            self.searchData?.sizes(for: id, callback: { (sizes, error) in
-                
-                if error != nil {
-                    
-                    print("error")
-                }
-                guard let sizes = sizes else {
-                    
-                    return
-                }
-                
-                let size = sizes.size?.first(where: { (size) -> Bool in
-                    
-                    return size.label == "Large Square"
-                })
-                
-                guard let url = size?.source else {
-                    
-                    return
-                }
-                
-                cellData.imageLoader?.downloadImage(url,progress: {(recieved,total) in
-                    
-                    if let indexPath = self.collectionViewDataSource?.indexPathOfObject(cellData) {
-                        
-                        self.collectionView!.reloadItems(at: [indexPath])
-                    }
-                    
-                }, completed: { (data, response, error) in
-                    
-                    if let error = error {
-                        
-                        print(error)
-                    }
-                    
-                    guard let data = data else {
-                        
-                        return();
-                    }
-                    
-                    cellData.image = UIImage(data: data)
-                    
-                    if let indexPath = self.collectionViewDataSource?.indexPathOfObject(cellData) {
-                        
-                        self.collectionView!.reloadItems(at: [indexPath])
-                        
-                    }
-                    
-                    cellData.imageLoader = nil
-                    
-                    return();
-                    
-                })
-                
-            })
-        }
-        
-        if let idx = self.collectionViewDataSource?.sectionData[0].items.count {
-            
-            if let paths = self.collectionViewDataSource?.insert(collectionViewSectionRows, atIndex: idx-1, section: 0)         {
-                
-                self.collectionView?.insertItems(at: paths)
-            }
-            
-        }
-    }
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         guard let cellData = collectionViewDataSource?.objectAtIndexPath(indexPath) else {
@@ -155,11 +61,12 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
             return CGSize.zero
         }
         
-        return cellData.size
+        return CGSize(width: collectionView.frame.size.width/2, height: 200)
 
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        
         return UIEdgeInsets.zero
     }
     
@@ -171,10 +78,42 @@ class TDWImageSearchCollectionViewController: UICollectionViewController, UIColl
         
         if (diff < 10) {
             
-            searchData?.nextPage(completion: self.generateCellData)
+            searchData?.nextPage(completion: self.didRecieveData)
             
         }
     }
 
+    func didRecieveData(cellData:[TDWCollectionViewImageCellData]?,error:Error?) -> Void {
+        
+        guard let cellData = cellData else {
+            return
+        }
+        
+        if let idx = self.collectionViewDataSource?.sectionData[0].items.count {
+            
+            if let paths = self.collectionViewDataSource?.insert(cellData, atIndex: idx-1, section: 0) {
+                
+                self.collectionView?.insertItems(at: paths)
+            }
+        }
+    }
     
+    func didUpdateData(cellData:[TDWCollectionViewImageCellData]?,error:Error?) -> Void {
+        
+        guard let cellData = cellData else {
+            return
+        }
+        
+        var updatedPaths = [IndexPath]()
+        
+        for cellData in cellData {
+            
+            if let path = self.collectionViewDataSource?.indexPathOfObject(cellData) {
+                
+                updatedPaths.append(path)
+            }
+        }
+        
+        self.collectionView?.reloadItems(at: updatedPaths)
+    }
 }

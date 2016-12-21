@@ -8,9 +8,25 @@
 
 import UIKit
 
-class TDWFlickrSearchData: NSObject {
+protocol TDWSearchDataProviderDelegate {
+    
+    func didUpdateData(cellData:[TDWCollectionViewImageCellData]?,error:Error?) -> Void
+}
+
+protocol TDWSearchDataProvider {
+    
+    var delegate:TDWSearchDataProviderDelegate? { get set }
+    
+    func search(term:String,completion:@escaping (_ photos:[TDWCollectionViewImageCellData]?,_ error:Error?)->Void)
+    
+    func nextPage(completion:@escaping (_ photos:[TDWCollectionViewImageCellData]?,_ error:Error?)->Void)
+}
+
+class TDWFlickrSearchData: NSObject, TDWSearchDataProvider {
     
     let service:TDWFlickrService
+    
+    var delegate:TDWSearchDataProviderDelegate? = nil
     
     var page = 1
     
@@ -21,7 +37,7 @@ class TDWFlickrSearchData: NSObject {
         self.service = service
     }
     
-    func search(term:String,completion:@escaping (_ photos:[TDWPhoto]?,_ error:Error?)->Void) {
+    func search(term:String,completion:@escaping (_ photos:[TDWCollectionViewImageCellData]?,_ error:Error?)->Void) {
         
         searchTerm = term
         
@@ -37,7 +53,7 @@ class TDWFlickrSearchData: NSObject {
         }
     }
     
-    func nextPage(completion:@escaping (_ photos:[TDWPhoto]?,_ error:Error?)->Void) {
+    func nextPage(completion:@escaping (_ photos:[TDWCollectionViewImageCellData]?,_ error:Error?)->Void) {
         
         page += 1
         
@@ -47,11 +63,11 @@ class TDWFlickrSearchData: NSObject {
             
         } else {
             
-             completion(nil,NSError(domain: "TDWFlickrService.noSearchTerm", code: 0, userInfo: nil))
+            completion(nil,NSError(domain: "TDWFlickrService.noSearchTerm", code: 0, userInfo: nil))
         }
     }
     
-    func fetchPage(term:String, page:Int, completion:@escaping (_ photos:[TDWPhoto]?,_ error:Error?)->Void) -> Void {
+    func fetchPage(term:String, page:Int, completion:@escaping (_ photos:[TDWCollectionViewImageCellData]?,_ error:Error?)->Void) -> Void {
         
         service.search(term,page: page) { (response, error) in
             
@@ -67,7 +83,7 @@ class TDWFlickrSearchData: NSObject {
                 return;
             }
             
-            completion(response.photos.photo,nil)
+            completion(self.generateCellData(photos: response.photos.photo),nil)
             
         }
     }
@@ -87,5 +103,80 @@ class TDWFlickrSearchData: NSObject {
             
             callback(response.sizes,nil)
         }
+    }
+    
+    func generateCellData(photos:[TDWPhoto]?) -> [TDWCollectionViewImageCellData]? {
+        
+        guard let photos = photos else {
+            
+            return nil
+        }
+        
+        var imageCellData = [TDWCollectionViewImageCellData]()
+        
+        for imageData in photos {
+            
+            guard let id = imageData.id else {
+                
+                print("no url params")
+                
+                continue
+            }
+            
+            let cellData = TDWCollectionViewImageCellData(identifier: "TDWImageCollectionViewCell",imageTitle:imageData.title,imageLoader:TDWImageLoader())
+            
+            imageCellData.append(cellData)
+            
+            service.sizes(for: id, callback: { (response, error) in
+                
+                if error != nil {
+                    
+                    print("error")
+                }
+                guard let response = response else {
+                    
+                    return
+                }
+                
+                let size = response.sizes?.size?.first(where: { (size) -> Bool in
+                    
+                    return size.label == "Large Square"
+                })
+                
+                guard let url = size?.source else {
+                    
+                    return
+                }
+                
+                cellData.imageLoader?.downloadImage(url,progress: {(recieved,total) in
+                    
+                    self.delegate?.didUpdateData(cellData: [cellData], error: nil)
+                    
+                }, completed: { (data, response, error) in
+                    
+                    if let error = error {
+                        
+                        print(error)
+                    }
+                    
+                    guard let data = data else {
+                        
+                        return();
+                    }
+                    
+                    cellData.image = UIImage(data: data)
+                    
+                    cellData.imageLoader = nil
+                    
+                    self.delegate?.didUpdateData(cellData: [cellData], error: nil)
+                    
+                    return();
+                    
+                })
+                
+            })
+        }
+        
+        return imageCellData
     }
 }

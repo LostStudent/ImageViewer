@@ -26,20 +26,16 @@ class TDWCollectionViewCellData: NSObject {
     
     let identifier : String
     
-    let size : CGSize
-    
-    init(identifier:String, size:CGSize) {
+    init(identifier:String) {
         
         self.identifier = identifier
         
-         self.size = size;
     }
     
-    init<CellClass>(cellClass:CellClass.Type, size:CGSize) {
+    init<CellClass>(cellClass:CellClass.Type) {
 
         self.identifier = String(describing: cellClass)
         
-        self.size = size;
     }
 }
 
@@ -53,7 +49,7 @@ class TDWCollectionViewImageCellData: TDWCollectionViewCellData {
     
     var url: String?
     
-    init(identifier:String, size:CGSize, imageTitle:String? = nil, image:UIImage? = nil, imageLoader:TDWImageLoader? = nil) {
+    init(identifier:String, imageTitle:String? = nil, image:UIImage? = nil, imageLoader:TDWImageLoader? = nil) {
         
         self.imageTitle = imageTitle
         
@@ -61,10 +57,10 @@ class TDWCollectionViewImageCellData: TDWCollectionViewCellData {
         
         self.imageLoader = imageLoader
         
-        super.init(identifier: identifier, size: size)
+        super.init(identifier: identifier)
     }
     
-    init<CellClass>(cellClass:CellClass.Type, size:CGSize, imageTitle:String? = nil, image:UIImage? = nil, imageLoader:TDWImageLoader? = nil) {
+    init<CellClass>(cellClass:CellClass.Type, imageTitle:String? = nil, image:UIImage? = nil, imageLoader:TDWImageLoader? = nil) {
         
         self.imageTitle = imageTitle
         
@@ -72,7 +68,7 @@ class TDWCollectionViewImageCellData: TDWCollectionViewCellData {
         
         self.imageLoader = imageLoader
         
-        super.init(cellClass: cellClass, size: size)
+        super.init(cellClass: cellClass)
     }
 
 }
