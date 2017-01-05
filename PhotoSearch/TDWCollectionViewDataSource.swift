@@ -22,24 +22,19 @@ class TDWCollectionViewDataSection: NSObject {
     }
 }
 
-class TDWCollectionViewCellData: NSObject {
+class TDWCollectionViewCellData : NSObject {
     
-    let identifier : String
+    var identifier : String
     
     init(identifier:String) {
         
         self.identifier = identifier
-        
     }
     
-    init<CellClass>(cellClass:CellClass.Type) {
-
-        self.identifier = String(describing: cellClass)
-        
-    }
+    //init<CellClass>(cellClass:CellClass.Type)
 }
 
-class TDWCollectionViewImageCellData: TDWCollectionViewCellData {
+class TDWCollectionViewImageCellData : TDWCollectionViewCellData {
     
     var imageTitle : String?
     
@@ -57,10 +52,12 @@ class TDWCollectionViewImageCellData: TDWCollectionViewCellData {
         
         self.imageLoader = imageLoader
         
-        super.init(identifier: identifier)
+       super.init(identifier: identifier)
     }
-    
+    /*
     init<CellClass>(cellClass:CellClass.Type, imageTitle:String? = nil, image:UIImage? = nil, imageLoader:TDWImageLoader? = nil) {
+        
+         self.cellClass = cellClass
         
         self.imageTitle = imageTitle
         
@@ -68,9 +65,10 @@ class TDWCollectionViewImageCellData: TDWCollectionViewCellData {
         
         self.imageLoader = imageLoader
         
-        super.init(cellClass: cellClass)
+        //super.init(cellClass: cellClass)
     }
-
+*/
+    
 }
 
 class TDWCollectionViewDataSource: NSObject, UICollectionViewDataSource {
@@ -90,12 +88,12 @@ class TDWCollectionViewDataSource: NSObject, UICollectionViewDataSource {
         
         for section in sectionData {
             
-            if let idx = section.items.index(of: cellData) {
+            if let idx = section.items.index(of:cellData) {
                 
-                if idx != NSNotFound {
+               
                     
-                    return IndexPath(item: idx, section: sectionData.index(of: section)!)
-                }
+                return IndexPath(item: idx, section: sectionData.index(of: section)!)
+                
             }
         }
         

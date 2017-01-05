@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "PhotoSearch/TDWImageLoader.swift"
-            timestampString = "503405047.315689"
+            timestampString = "505304921.112658"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "33"
-            endingLineNumber = "33"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
             landmarkName = "downloadImage(_:progress:completed:)"
             landmarkType = "7">
          </BreakpointContent>

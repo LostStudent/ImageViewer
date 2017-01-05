@@ -18,6 +18,8 @@ class TDWImageLoader: NSObject, URLSessionDelegate, URLSessionDataDelegate {
     
     var returnedData : Data? = nil
     
+     var session : URLSession? = nil
+    
     func getProgress() -> (recieved:Int64,total:Int64)? {
         
         guard let t = task else {
@@ -50,6 +52,8 @@ class TDWImageLoader: NSObject, URLSessionDelegate, URLSessionDataDelegate {
         let session = URLSession(configuration: configuration,
                                    delegate: self,
                                    delegateQueue:OperationQueue.main)
+        
+        kdebug_signpost_start(5, 0, 0, 0, 0)
         
         task = session.dataTask(with: request)
     
@@ -89,5 +93,9 @@ class TDWImageLoader: NSObject, URLSessionDelegate, URLSessionDataDelegate {
         
             completed(returnedData, task.response, error)
         }
+        
+        session.invalidateAndCancel()
+        
+         kdebug_signpost_end(5, 0, 0, 0, 0)
     }
 }

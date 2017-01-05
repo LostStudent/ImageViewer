@@ -12,7 +12,9 @@ import SwiftyJSON
 
 class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionDataDelegate {
     
-    var apiKey:String? = nil;
+    var apiKey : String? = nil;
+    
+    var session : URLSession? = nil
     
     init(apiKey:String) {
         
@@ -79,16 +81,19 @@ class TDWFlickrService: NSObject, URLSessionDelegate, URLSessionDataDelegate {
         
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let configuration =
-            URLSessionConfiguration.default
+        if session == nil {
         
-        let session = URLSession(configuration: configuration,
-                                   delegate: self,
-                                   delegateQueue:OperationQueue.main)
+            let configuration =
+                URLSessionConfiguration.default
+            
+            session = URLSession(configuration: configuration,
+                                       delegate: self,
+                                       delegateQueue:OperationQueue.main)
+        }
         
-        let task = session.dataTask(with: request, completionHandler:callback)
+        let task = session?.dataTask(with: request, completionHandler:callback)
         
-        task.resume()
+        task?.resume()
     }
     
     
